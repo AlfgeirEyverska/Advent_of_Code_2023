@@ -1,19 +1,18 @@
-fn count_winners(card: &str) -> u32 {
-
+fn count_winners(card: &str) -> usize {
     let card_info: Vec<&str> = card.split(":").collect();
     let card_number = card_info[0].strip_prefix("Card").unwrap().trim();
     let game_numbers: Vec<&str> = card_info[1].split("|").collect();
 
-    let winning_numbers: Vec<u32> = game_numbers[0]
+    let winning_numbers: Vec<usize> = game_numbers[0]
         .split(" ")
         .filter(|x| x != &"")
-        .map(|x| x.parse::<u32>().expect("Cannot parse int from string!"))
+        .map(|x| x.parse::<usize>().expect("Cannot parse int from string!"))
         .collect();
 
-    let player_numbers: Vec<u32> = game_numbers[1]
+    let player_numbers: Vec<usize> = game_numbers[1]
         .split(" ")
         .filter(|x| x != &"")
-        .map(|x| x.parse::<u32>().expect("Cannot parse int from string!"))
+        .map(|x| x.parse::<usize>().expect("Cannot parse int from string!"))
         .collect();
 
     let winners: usize = winning_numbers
@@ -21,39 +20,36 @@ fn count_winners(card: &str) -> u32 {
         .filter(|x| player_numbers.contains(x))
         .count();
 
-    // println!("{}", winners);
-    winners as u32
+    winners as usize
 }
 
-fn part1(contents: &Vec<&str>) -> u128 {
-
-    let result:u128 = contents.iter().map(|x| count_winners(&x)).filter(|x| *x != 0).map(|x| 2u128.pow(x - 1)).sum();
-    println!("result: {}", result);
+fn part1(contents: &Vec<&str>) -> u32 {
+    let result: u32 = contents
+        .iter()
+        .map(|x| count_winners(&x))
+        .filter(|x| *x != 0)
+        .map(|x| 2u32.pow(x as u32 - 1))
+        .sum();
     result
-
 }
 
-fn part2(contents: &Vec<&str>) -> u128 {
-
-    /*
-     * this is interesting, i need to process the first set of cards and all subsequent sets of
-     * cards. Any 
-     * */
-
-    0u128;
+fn part2(contents: &Vec<&str>) -> usize {
+    let mut cards = vec![1; contents.len()];
+    for (i, card) in contents.iter().enumerate() {
+        let w = count_winners(&card);
+        let n = cards[i];
+        for item in &mut cards[i + 1..=i + w] {
+            *item += n;
+        }
+    }
+    cards.iter().sum()
 }
-
 
 fn main() {
-    let file_path =
-        "/Users/ty/Library/Mobile Documents/com~apple~CloudDocs/Advent_of_Code/day4/input.txt";
+    let file_path = "input.txt";
     let contents = std::fs::read_to_string(file_path).expect("Unable to read file!");
     let contents: Vec<&str> = contents.lines().collect();
 
-
-    part2(&contents);
-
-
-
-
+    let result = part2(&contents);
+    println!("{}", result);
 }
