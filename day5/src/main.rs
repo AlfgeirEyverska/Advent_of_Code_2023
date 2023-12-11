@@ -2,16 +2,16 @@ use itertools::Itertools;
 
 #[derive(Debug)]
 struct AlmanacMap {
-    dest_start: u32,
-    src_start: u32,
-    range_len: u32,
+    dest_start: u64,
+    src_start: u64,
+    range_len: u64,
 }
 
 impl AlmanacMap {
     fn new(line: &str) -> AlmanacMap {
-        let items: Vec<u32> = line
+        let items: Vec<u64> = line
             .split(" ")
-            .map(|x| x.parse::<u32>().expect("Could not parse the line!"))
+            .map(|x| x.parse::<u64>().expect("Could not parse the line!"))
             .collect();
         AlmanacMap {
             dest_start: items[0],
@@ -20,17 +20,15 @@ impl AlmanacMap {
         }
     }
 
-    fn contains(&self, num: u32) -> bool {
+    fn contains(&self, num: u64) -> bool {
         num >= self.src_start && num <= self.src_start + self.range_len
     }
 }
 
-fn lookup(num: u32, this: &Vec<AlmanacMap>) -> u32 {
+fn lookup(num: u64, section: &Vec<AlmanacMap>) -> u64 {
     let mut found = false;
-    let mut result: u32 = 0;
-    //    println!("LOOKING FOR {}", num);
-    for (index, item) in this.iter().enumerate() {
-        //        println!("{} : {:?}", index, item);
+    let mut result: u64 = 0;
+    for item in section.iter() {
         if item.contains(num) {
             found = true;
             result = item.dest_start + (num - item.src_start);
@@ -40,44 +38,45 @@ fn lookup(num: u32, this: &Vec<AlmanacMap>) -> u32 {
     if !found {
         result = num;
     }
+    let test = section
+        .iter()
+        .filter(|x| x.contains(num))
+        .collect::<Vec<_>>();
+    let test: AlmanacMap = test.get(0);
+
+    println!("{:?}", test);
+//        .reduce(|x, next| next.dest_start + (num - next.src_start));
+//        .unwrap_or(num);
+//    assert_eq!(test, result);
     result
 }
 
-fn location(num: u32, mappings: &Vec<Vec<AlmanacMap>>) -> u32 {
-    let mut next_target = num;
-    for stage in mappings {
-        next_target = lookup(next_target, &stage);
-    }
-    next_target
+fn location(num: u64, mappings: &Vec<Vec<AlmanacMap>>) -> u64 {
+    /*
+       let mut next_target = num;
+        for stage in mappings {
+            next_target = lookup(next_target, &stage);
+        }
+    */
+    mappings.iter().fold(num, |acc, next| lookup(acc, next))
 }
 
 fn result(contents: &Vec<&str>) {
-    /*
     let seeds: Vec<&str> = contents[0].split(":").map(|x| x.trim()).collect();
-    let seeds: Vec<u32> = seeds[1]
+    let seeds: Vec<u64> = seeds[1]
         .split(" ")
-        .map(|x| x.parse::<u32>().expect("Could not parse int!"))
+        .map(|x| x.parse::<u64>().expect("Could not parse int!"))
         .collect();
-    */
-    let seeds: Vec<&str> = contents[0].split(":").map(|x| x.trim()).collect();
-    let seeds: Vec<u32> = seeds[1]
-        .split(" ")
-        .map(|x| x.parse::<u32>().expect("Could not parse int!"))
-        .collect();
-    println!("{:?}", seeds);
-    println!("Growing seeds");
 
+    // End of seeds setup for part 1
+    /*
     let seeds: Vec<_> = seeds
         .iter()
         .tuples()
-        .map(|(&x, &y)| (x..x+y).collect::<Vec<u32>>()   )
-        .collect();
-
-    let seeds: Vec<_> = seeds
-        .iter()
+        .map(|(&x, &y)| (x..x + y).collect::<Vec<u64>>())
         .flatten()
         .collect();
-
+    */
 
     let section_breaks = vec![
         "seed-to-soil map:",
@@ -117,22 +116,15 @@ fn result(contents: &Vec<&str>) {
 
     let result = seeds
         .iter()
-        .map(|x| location(*x.clone(), &mappings))
+        .map(|x| location(x.clone(), &mappings))
         .min()
         .unwrap();
     println!("{:?}", result);
-
 }
 
 fn main() {
     let contents = std::fs::read_to_string("input.txt").expect("Unable to read file!");
     let contents: Vec<&str> = contents.lines().filter(|x| *x != "").collect();
 
-
-
     result(&contents);
-
-
-
-
 }
