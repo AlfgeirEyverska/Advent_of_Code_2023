@@ -52,13 +52,6 @@ fn location(num: u32, mappings: &Vec<Vec<AlmanacMap>>) -> u32 {
 }
 
 fn result(contents: &Vec<&str>) {
-    /*
-    let seeds: Vec<&str> = contents[0].split(":").map(|x| x.trim()).collect();
-    let seeds: Vec<u32> = seeds[1]
-        .split(" ")
-        .map(|x| x.parse::<u32>().expect("Could not parse int!"))
-        .collect();
-    */
     let seeds: Vec<&str> = contents[0].split(":").map(|x| x.trim()).collect();
     let seeds: Vec<u32> = seeds[1]
         .split(" ")
@@ -66,19 +59,21 @@ fn result(contents: &Vec<&str>) {
         .collect();
     println!("{:?}", seeds);
     println!("Growing seeds");
-
+// Part 2 requires special treatment of the seeds from part 2 above
     let seeds: Vec<_> = seeds
         .iter()
         .tuples()
-        .map(|(&x, &y)| (x..x+y).collect::<Vec<u32>>()   )
+        .map(|(&x, &y)| (x..x + y).collect::<Vec<u32>>())
         .collect();
+    for seed in &seeds {
+        println!("{:?}", seed);
+    }
+        
 
-    let seeds: Vec<_> = seeds
-        .iter()
-        .flatten()
-        .collect();
-
-
+    let seeds: Vec<_> = seeds.iter().flatten().collect();
+// End of the part 2 additions
+    
+/*
     let section_breaks = vec![
         "seed-to-soil map:",
         "soil-to-fertilizer map:",
@@ -121,18 +116,12 @@ fn result(contents: &Vec<&str>) {
         .min()
         .unwrap();
     println!("{:?}", result);
-
+    */
 }
 
 fn main() {
     let contents = std::fs::read_to_string("input.txt").expect("Unable to read file!");
     let contents: Vec<&str> = contents.lines().filter(|x| *x != "").collect();
 
-
-
     result(&contents);
-
-
-
-
 }
