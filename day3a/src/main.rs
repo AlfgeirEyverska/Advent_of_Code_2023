@@ -59,7 +59,7 @@ impl PotentialPartNumber {
 }
 
 fn main() {
-    let file_path = "/Users/tylerkorte/Desktop/TKs MBP/Advent_of_Code/day3a/input.txt";
+    let file_path = "input.txt";
     let contents = std::fs::read_to_string(file_path).expect("Unable to read file!");
     let contents: Vec<&str> = contents.lines().collect();
     let mut ppns: Vec<PotentialPartNumber> = vec![];
@@ -78,15 +78,15 @@ fn main() {
     }
 
     /*
-    let nums: Vec<PotentialPartNumber> = contents.iter().enumerate().map(|(i, x)| {
-        re.find_iter(x).map(|y| PotentialPartNumber {
-            num: y.as_str().to_string(),
-            row: i,
-            start: y.start(),
-            end: y.end(),
-        });
-    }).flatten();
-*/
+        let nums: Vec<PotentialPartNumber> = contents.iter().enumerate().map(|(i, x)| {
+            re.find_iter(x).map(|y| PotentialPartNumber {
+                num: y.as_str().to_string(),
+                row: i,
+                start: y.start(),
+                end: y.end(),
+            });
+        }).flatten();
+    */
     let s: u32 = ppns
         .iter()
         .filter(|x| x.is_valid(&contents))

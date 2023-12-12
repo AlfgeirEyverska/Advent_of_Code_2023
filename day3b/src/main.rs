@@ -18,6 +18,7 @@ impl PotentialPartNumber {
     fn surrounding_chars(&self, input: &Vec<&str>) -> Vec<char> {
         let mut ret: Vec<char> = vec![];
         let same_row: Vec<char> = input[self.row].chars().collect();
+
         let left = if self.start > 0 {
             ret.push(same_row[self.start - 1]);
             self.start - 1
@@ -31,12 +32,14 @@ impl PotentialPartNumber {
         } else {
             self.end - 1
         };
+
         if self.row > 0 {
             let prev_row: Vec<char> = input[self.row - 1].chars().collect();
             for i in left..=right {
                 ret.push(prev_row[i]);
             }
         }
+
         if self.row < input.len() - 1 {
             let next_row: Vec<char> = input[self.row + 1].chars().collect();
             for i in left..=right {
@@ -61,6 +64,7 @@ impl PotentialPartNumber {
     fn adjacent_stars(&self, input: &Vec<&str>) -> Vec<(usize, usize)> {
         let mut ret: Vec<(usize, usize)> = vec![];
         let same_row: Vec<char> = input[self.row].chars().collect();
+
         let left = if self.start > 0 {
             if same_row[self.start - 1] == '*' {
                 ret.push((self.row, self.start - 1))
@@ -69,6 +73,7 @@ impl PotentialPartNumber {
         } else {
             self.start
         };
+
         let right = if self.end < input[0].len() - 1 {
             if same_row[self.end] == '*' {
                 ret.push((self.row, self.end))
@@ -77,6 +82,7 @@ impl PotentialPartNumber {
         } else {
             self.end - 1
         };
+
         if self.row > 0 {
             let prev_row: Vec<char> = input[self.row - 1].chars().collect();
             for i in left..=right {
@@ -85,6 +91,7 @@ impl PotentialPartNumber {
                 }
             }
         }
+
         if self.row < input.len() - 1 {
             let next_row: Vec<char> = input[self.row + 1].chars().collect();
             for i in left..=right {
@@ -98,8 +105,7 @@ impl PotentialPartNumber {
 }
 
 fn main() {
-    let file_path =
-        "/Users/ty/Library/Mobile Documents/com~apple~CloudDocs/Advent_of_Code/day3b/input.txt";
+    let file_path = "input.txt";
     let contents = std::fs::read_to_string(file_path).expect("Unable to read file!");
     let contents: Vec<&str> = contents.lines().collect();
     let mut ppns: Vec<PotentialPartNumber> = vec![];
@@ -116,7 +122,7 @@ fn main() {
             });
         }
     }
-    
+
     let mut gears = HashMap::new();
 
     for p in ppns.iter() {
