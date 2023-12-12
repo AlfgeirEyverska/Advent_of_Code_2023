@@ -26,6 +26,7 @@ impl AlmanacMap {
 }
 
 fn lookup(num: u64, section: &Vec<AlmanacMap>) -> u64 {
+    /*
     let mut found = false;
     let mut result: u64 = 0;
     for item in section.iter() {
@@ -38,17 +39,13 @@ fn lookup(num: u64, section: &Vec<AlmanacMap>) -> u64 {
     if !found {
         result = num;
     }
-    let test = section
+    */
+    section
         .iter()
         .filter(|x| x.contains(num))
-        .collect::<Vec<_>>();
-    let test: AlmanacMap = test.get(0);
-
-    println!("{:?}", test);
-//        .reduce(|x, next| next.dest_start + (num - next.src_start));
-//        .unwrap_or(num);
-//    assert_eq!(test, result);
-    result
+        .map(|x| x.dest_start + (num - x.src_start))
+        .nth(0)
+        .unwrap_or(num)
 }
 
 fn location(num: u64, mappings: &Vec<Vec<AlmanacMap>>) -> u64 {
