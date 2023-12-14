@@ -29,7 +29,7 @@ impl Round {
     }
 }
 
-fn strenght_of(card: char) -> usize {
+fn strength_of(card: char) -> usize {
     match card {
         'A' => 14,
         'K' => 13,
@@ -46,6 +46,12 @@ fn strenght_of(card: char) -> usize {
         '2' => 2,
         _ => panic!("Unknown card type encountered! {:?}", card),
     }
+}
+
+fn strength(hand: &str) -> usize {
+
+    hand.chars().map(|x| strength_of(x)).sum()
+
 }
 
 fn hand_type(hand: &str) -> HandType {
@@ -80,4 +86,5 @@ fn main() {
     //let r = Round::from(content);
 
     println!("{:?}", r.hand_type);
+    println!("{:?}", strength(&"AAAT9"));
 }
