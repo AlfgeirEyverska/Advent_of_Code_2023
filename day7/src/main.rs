@@ -48,10 +48,8 @@ fn strength_of(card: char) -> usize {
     }
 }
 
-fn strength(hand: &str) -> usize {
-
-    hand.chars().map(|x| strength_of(x)).sum()
-
+fn strength(hand: &str) -> Vec<usize> {
+    hand.chars().map(|x| strength_of(x)).collect()
 }
 
 fn hand_type(hand: &str) -> HandType {
@@ -79,12 +77,18 @@ fn hand_type(hand: &str) -> HandType {
 
 fn main() {
     let contents = std::fs::read_to_string("input.txt").expect("Unable to read file!");
-    let content = contents.lines().nth(0).unwrap();
-    println!("{content}");
+    let contents = String::from("32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483");
 
-    let r = Round::from(&"12aaa 37");
-    //let r = Round::from(content);
+    for line in contents.lines() {
+        println!("{line}");
+        let r = Round::from(line);
 
-    println!("{:?}", r.hand_type);
-    println!("{:?}", strength(&"AAAT9"));
+        println!("{:?}", r.hand_type);
+        println!("{:?}", r.bet);
+        println!("{:?}", strength(&r.hand));
+    }
 }
