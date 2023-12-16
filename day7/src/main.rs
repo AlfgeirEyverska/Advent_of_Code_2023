@@ -36,7 +36,7 @@ fn strength(hand: &str) -> u32 {
             'A' => 'E',
             'K' => 'D',
             'Q' => 'C',
-            'J' => 'B',
+            //'J' => 'B',
             'T' => 'A',
             '9' => '9',
             '8' => '8',
@@ -46,6 +46,7 @@ fn strength(hand: &str) -> u32 {
             '4' => '4',
             '3' => '3',
             '2' => '2',
+            'J' => '1',
             _ => panic!("Unknown card detected!"),
         };
         cards.push(c);
@@ -60,7 +61,7 @@ fn strength(hand: &str) -> u32 {
     strength
 }
 
-fn hand_type(hand: &str) -> HandType {
+fn hand_type_a(hand: &str) -> HandType {
     let mut cards = HashMap::new();
     for item in hand.chars() {
         cards.entry(item).and_modify(|val| *val += 1).or_insert(1);
@@ -83,10 +84,55 @@ fn hand_type(hand: &str) -> HandType {
     }
 }
 
+fn hand_type(hand: &str) -> HandType {
+    let mut cards = HashMap::new();
+    let mut jokers = 0;
+
+    for item in hand.chars() {
+        if item == 'J' {
+            jokers += 1;
+        } else {
+            cards.entry(item).and_modify(|val| *val += 1).or_insert(1);
+        }
+    }
+
+    let mut cards: Vec<_> = cards.into_values().collect();
+    cards.sort();
+    cards.reverse();
+
+    if jokers == 5 {
+        cards = vec![5];
+        jokers = 0;
+    }
+    let mut i = 0;
+    while jokers > 0 {
+        if cards[i] < 5 {
+            cards[i] += 1;
+            jokers -= 1;
+        } else {
+            i += 1;
+        }
+    }
+
+    let key = cards.iter().fold(0, |acc, x| 10 * acc + x);
+
+    match key {
+        5 => HandType::FiveOfKind,
+        41 => HandType::FourOfKind,
+        32 => HandType::FullHouse,
+        311 => HandType::ThreeOfKind,
+        221 => HandType::TwoPair,
+        2111 => HandType::OnePair,
+        11111 => HandType::HighCard,
+        _ => panic!("Unsupported hand type detected! {:?}", hand),
+    }
+}
+
 fn main() {
     let contents = std::fs::read_to_string("input.txt").expect("Unable to read file!");
     /*
-        let contents = String::from("32T3K 765
+    let contents = String::from(
+    "32T3K 765
     T55J5 684
     KK677 28
     KTJJT 220
@@ -102,7 +148,6 @@ fn main() {
     hands.reverse();
     let mut res = 0;
     for (i, h) in hands.iter().enumerate() {
-        println!("{i}");
         res += h.bet * (i as u128 + 1);
     }
 
