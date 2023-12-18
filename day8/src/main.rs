@@ -65,6 +65,8 @@ fn part2(turns: Vec<char>, mappings: HashMap<&str, (&str, &str)>) {
     
     // After 3 hours of running >:/
     // 3609894725 -> ["VBN", "XPD", "MSL", "CFH", "MSQ", "BFH"]
+    // 21490561514 -> ["JVP", "XGK", "KHF", "KPZ", "NDF", "VSN"]
+    // 24035773251517 -> result. This would have taken forever to brute force
     println!("result: {:?}", counter);
 }
 
